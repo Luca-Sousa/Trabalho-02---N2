@@ -1,133 +1,68 @@
+/* Considere uma pilha que armazene caracteres. Faça uma função para
+determinar se uma string é da forma XY, onde X é uma cadeia formada por
+caracteres arbitrários e Y é o reverso de X. Por exemplo, se x = ABCD, então y =
+DCBA. Considere que x e y são duas strings distintas.
+
+Equipe 1: 
+1. LUCAS DE SOUSA SILVA 
+2. FRANCISCO ALISSON COSTA ARAÚJO
+3. VANDI VIEIRA DOS SANTOS JÚNIOR 
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-// Definição da estrutura do No
-typedef struct Node {
-    int valor;
-    struct Node* prox;
-} No;
+//Definificação de variáveis verdadeiro e Falso
+#define true 1;
+#define false 0;
 
-// Definição da estrutura dos Elementos da Fila
-typedef struct {
-    No* inicio;
-    No* fim;
-} Fila;
+int verifica_forma_xy(char* string) {
 
-//Função para Inicialização da Fila
-void inicializarFila(Fila* fila) {
-    fila->inicio = NULL;
-    fila->fim = NULL;
-}
+    int tamanho = strlen(string);
+    int meio = tamanho / 2;
+    int i, j;
 
-//Função para Verificar se a Fila está Vazia
-int filaVazia(Fila* fila) {
-    return (fila->inicio == NULL);
-}
-
-//Função para Enfileirar os Elmentos da Fila
-void enfileirar(Fila* fila, int valor)  {
-    No* novoNo = (No*)malloc(sizeof(No));
-    novoNo->valor = valor;
-    novoNo->prox = NULL;
-
-    if (filaVazia(fila)) {
-        fila->inicio = novoNo;
-        fila->fim = novoNo;
-    } 
-    else {
-        fila->fim->prox = novoNo;
-        fila->fim = novoNo;
-    }
-}
-
-//Função para Desenfileirar os Elmentos da Fila
-int desenfileirar(Fila* fila)  {
-
-    if (filaVazia(fila)) {
-        printf("Erro: A fila está vazia.\n");
-        return -1; // Valor inválido para indicar erro
+    //Verificação se o tamanho da String Concatenada é Impar
+    if (tamanho % 2 != 0) {
+        return false; // Não está na forma XY
     }
 
-    No* noRemovido = fila->inicio;
-    int valor = noRemovido->valor;
-    fila->inicio = fila->inicio->prox;
-
-    if (fila->inicio == NULL) {
-        fila->fim = NULL;
+    // Verificar se a segunda metade é o reverso da primeira metade
+    for (i = 0, j = strlen(string) - 1; i < meio; i++, j--) {
+        if (string[i] != string[j]) {
+            return false; // Não está na forma XY
+        }
     }
-
-    free(noRemovido);
-
-    return valor;
-}
-
-//Função para Contanear os elementos das Filas
-void concatenarFilas(Fila* F1, Fila* F2)  {
-
-    while (!filaVazia(F2))  {
-        int valor = desenfileirar(F2);
-        enfileirar(F1, valor);
-    }
-}
-
-//Função para Imprimir os elementos das Filas
-void imprimirFila(Fila* fila)  {
-
-    No* atual = fila->inicio;
-
-    while (atual != NULL)  {
-        printf("%d ", atual->valor);
-        atual = atual->prox;
-    }
-    printf("\n");
+    
+    return true; // Está na forma XY
 }
 
 //Função Principal
-int main()  {
+int main() {
+    char x[100];
+    char y[100];
+    char string[200];
 
-    Fila F1, F2;
-    inicializarFila(&F1);
-    inicializarFila(&F2);
+    printf("Digite o(s) Caractere(s) de x: ");
+    scanf("%s", x);
 
-    int n, i, valor;
+    printf("Digite o(s) Caractere(s) de y: ");
+    scanf("%s", y);
 
-    printf("Quantos elementos deseja inserir na fila F1? ");
-    scanf("%d", &n);
+    /* A Função copia os caracteres da string de origem para a string de
+    destino até encontrar o caractere nulo. */
+    strcpy(string, x);
 
-    for (i = 0; i < n; i++) {
-        printf("Informe o elemento %d da F1: ", i + 1);
-        scanf("%d", &valor);
-        enfileirar(&F1, valor);
+    // A Função irá fazer a concatenação das duas strings.
+    strcat(string, y);
+
+    if (verifica_forma_xy(string)) {
+        printf("A string '%s' esta na forma XY.\n", string);
     }
-
-    printf("--------------------------------------------\n");
-
-    printf("Quantos elementos deseja inserir na fila F2? ");
-    scanf("%d", &n);
-
-    for (i = 0; i < n; i++) {
-        printf("Informe o elemento %d da F2: ", i + 1);
-        scanf("%d", &valor);
-        enfileirar(&F2, valor);
+    else {
+        printf("A string '%s' nao esta na forma XY.\n", string);
     }
-
-    printf("------------------------------\n");
-
-    printf("Fila F1 antes da concatenacao: ");
-    imprimirFila(&F1);
-
-    printf("Fila F2 antes da concatenacao: ");
-    imprimirFila(&F2);
-
-    concatenarFilas(&F1, &F2);
-
-    printf("----------------------------\n");
-
-    printf("Fila F1 apos a concatenacao: ");
-    imprimirFila(&F1);
-
-    printf("Fila F2 apos a concatenacao: ");
-    imprimirFila(&F2);
 
     return 0;
 }
